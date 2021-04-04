@@ -1,41 +1,51 @@
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 public class Main {
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         //Get argument from command
-        String keysPath = args[2];
-        String plainTextPath = args[4];
+        String keyOrMsg = args[2];
+        String msgOrCipher = args[4];
         String outputPath = args[6];
 
-        //initial Files
-        File keysFile = new File(keysPath);
-        File plainTextFile = new File(plainTextPath);
+        byte[] keys = Files.readAllBytes(Paths.get(keyOrMsg));
 
-        //Split to list of blocks
-        List[] plainTextSplitToBlocks = utils.getBlocksByFile(plainTextFile);
-        List[] keysSplitToBlocks = utils.getBlocksByFile(keysFile);
+        byte[] k1 = Arrays.copyOfRange(keys, 0, keys.length / 2);
+        byte[] k2 = Arrays.copyOfRange(keys, keys.length / 2, keys.length);
 
-        if (args[0].equals("–e")) {
-            //initial keys
-            AesEnc aesEnc = new AesEnc(keysSplitToBlocks);
-            aesEnc.writeMatrixToFile(outputPath, plainTextSplitToBlocks);
-            List[] cypher = aesEnc.encryption(plainTextSplitToBlocks);
-            aesEnc.writeMatrixToFile(outputPath, cypher);
+        byte[] m = Files.readAllBytes(Paths.get(msgOrCipher));
 
-        } else if (args[0].equals("–d")) {
-            AesDec aesDec = new AesDec(keysSplitToBlocks);
-            aesDec.writeMatrixToFile(outputPath, plainTextSplitToBlocks);
-            List[] plain = aesDec.decryption(plainTextSplitToBlocks);
-            aesDec.writeMatrixToFile(outputPath, plain);
 
-        } else if (args[0].equals("–b")) {
-
+        if (args[0].equals("-e")) {
+            AesEnc enc = new AesEnc(k1,k2);
+            byte[] res = enc.encryption(m);
+            try (FileOutputStream fos = new FileOutputStream(outputPath)) {
+                fos.write(res);
+            } catch (Exception e) {
+                System.out.println("exception write to file");
+            }
+        } else if (args[0].equals("-d")) {
+            AesDec dec = new AesDec(k1,k2);
+            byte[] res = dec.decryption(m);
+            try (FileOutputStream fos = new FileOutputStream(outputPath)) {
+                fos.write(res);
+            } catch (Exception e) {
+                System.out.println("exception write to file");
+            }
+        } else if (args[0].equals("-b")) {
             AesBreak aesBreak = new AesBreak();
-            List[] keys = aesBreak.breakAes(plainTextSplitToBlocks, keysSplitToBlocks);
-            aesBreak.writeMatrixToFile(outputPath, keys);
+            byte[] res = aesBreak.breakAes(keys,m);
+            try (FileOutputStream fos = new FileOutputStream(outputPath)) {
+                fos.write(res);
+            } catch (Exception e) {
+                System.out.println("exception write to file");
+            }
         }
     }
 }

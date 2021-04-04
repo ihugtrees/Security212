@@ -1,100 +1,65 @@
-import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 public class AesDec {
+    private byte[][] key1 = new byte[4][4];
+    private byte[][] key2 = new byte[4][4];
 
-    //Fields
-    private ArrayList<ArrayList<String>> key1;
-    private ArrayList<ArrayList<String>> key2;
-    private ArrayList<ArrayList<String>> key3;
-
-    /***
-     * Constuctor.
-     *
-     * @param keys  List of Keys to encrypt with.
-     */
-    public AesDec(List[] keys) {
-        this.key1 = (ArrayList<ArrayList<String>>)keys[0];
-        this.key2 = (ArrayList<ArrayList<String>>)keys[1];
-        this.key3 = (ArrayList<ArrayList<String>>)keys[2];
+    public AesDec(byte[] key1, byte[] key2) {
+        for (int r = 0; r < 4; r++) {
+            this.key1[r] = Arrays.copyOfRange(key1, r * 4, (r + 1) * 4);
+            this.key2[r] = Arrays.copyOfRange(key2, r * 4, (r + 1) * 4);
+        }
     }
 
-    /***
-     * Get a cipherText message and return decrypted message in List form
-     * using the initial keys.
-     *
-     * @param cypherText List of 2 dim Arraylist containing cipherText as Hexadecimal values.
-     *
-     * @return list of 2-dim ArrayList containing encrypted message.
-     */
-    public List[] decryption(List[] cypherText) {
+    public byte[] decryption(byte[] encrypted) {
 
-        if(cypherText == null) {
+        if (encrypted == null) {
             return null;
         }
 
-        List[] decrypted = new List[cypherText.length];
+        //initial list to encrypted message
+        byte[] message = new byte[encrypted.length];
 
         //declare runner
-        ArrayList<ArrayList<String>> currentMatToDec;
-        for(int i = 0; i < cypherText.length; i++) {
+        ArrayList<ArrayList<String>> currentMatToEnc;
 
-            //get current message
-            currentMatToDec =(ArrayList<ArrayList<String>>) cypherText[i];
+        for (int i = 0; i < encrypted.length / 16; i++) {
+            byte[][] blocked = new byte[4][4];
 
-            //iteration 1
-            currentMatToDec = utils.matrixXor(currentMatToDec, this.key3);
-            currentMatToDec = shiftColsInv(currentMatToDec);
+            for (int r = 0; r < 4; r++) {
+                blocked[r] = Arrays.copyOfRange(encrypted, (r * 4) + (i * 16), ((r + 1) * 4) + (i * 16));
 
-            //iteration 2
-            currentMatToDec = utils.matrixXor(currentMatToDec, this.key2);
-            currentMatToDec = shiftColsInv(currentMatToDec);
-
-            //iteration 3
-            currentMatToDec = utils.matrixXor(currentMatToDec, this.key1);
-            currentMatToDec = shiftColsInv(currentMatToDec);
-
-            //insert to decrypted list
-            decrypted[i] = currentMatToDec;
-        }
-
-        return decrypted;
-    }
-
-    /***
-     * Shift columns to a given 2-dim ArrayList.
-     * shift each column of index i, i shifts down.
-     *
-     * @param matrixToShift 2-dim ArrayList to shift.
-     *
-     * @return 2-dim ArrayList shifted.
-     */
-    public ArrayList<ArrayList<String>> shiftColsInv(ArrayList<ArrayList<String>> matrixToShift) {
-
-        if(matrixToShift == null) {
-            return null;
-        }
-
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < i; j++) {
-                String removed = matrixToShift.get(i).remove(matrixToShift.get(i).size()-1);
-                matrixToShift.get(i).add(0, removed);
             }
+            for (int k = 0; k < 4; k++) {
+                for (int j = 0; j < 4; j++) {
+                    blocked[k][j] = (byte) ((this.key2[k][j]) ^ (blocked[k][j]));
+                }
+            }
+            byte[][] transposed = new byte[4][4];
+            for (int k = 0; k < 4; k++) {
+                for (int j = 0; j < 4; j++) {
+                    transposed[k][j] = blocked[j][k];
+                }
+            }
+            for (int k = 0; k < 4; k++) {
+                for (int j = 0; j < 4; j++) {
+                    transposed[k][j] = (byte) ((this.key1[k][j]) ^ (transposed[k][j]));
+                }
+            }
+            byte[][] transposed2 = new byte[4][4];
+            for (int k = 0; k < 4; k++) {
+                for (int j = 0; j < 4; j++) {
+                    transposed2[k][j] = transposed[j][k];
+                }
+            }
+            for (int k = 0; k < 4; k++) {
+                for (int j = 0; j < 4; j++) {
+                    message[k * 4 + j + i * 16] = transposed2[k][j];
+                }
+            }
+
         }
-
-        return matrixToShift;
+        return message;
     }
-
-    /***
-     * write 2-dim list to the given output file.
-     *
-     * @param path path to the output file.
-     * @param listMatrixToWrite list containing 2-dim values
-     */
-    public void writeMatrixToFile(String path, List[] listMatrixToWrite) {
-
-        utils.writeMatrixToFile(path, listMatrixToWrite);
-    }
-
-
 }

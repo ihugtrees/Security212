@@ -1,76 +1,59 @@
-import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 public class AesEnc {
+    private byte[][] key1 = new byte[4][4];
+    private byte[][] key2 = new byte[4][4];
 
-    //Fields
-    private ArrayList<ArrayList<String>> key1;
-    private ArrayList<ArrayList<String>> key2;
-    private ArrayList<ArrayList<String>> key3;
-
-    /***
-     * Constructor.
-     *
-     * @param keys List of Keys to encrypt with.
-     */
-    public AesEnc(List[] keys) {
-        this.key1 = (ArrayList<ArrayList<String>>)keys[0];
-        this.key2 = (ArrayList<ArrayList<String>>)keys[1];
-        this.key3 = (ArrayList<ArrayList<String>>)keys[2];
+    public AesEnc(byte[] key1, byte[] key2) {
+        for (int r = 0; r < 4; r++) {
+            this.key1[r] = Arrays.copyOfRange(key1, r * 4, (r + 1) * 4);
+            this.key2[r] = Arrays.copyOfRange(key2, r * 4, (r + 1) * 4);
+        }
     }
 
-    /***
-     * Get a plainText message and return encrypted message in List form
-     * using the initial keys.
-     *
-     * @param plainText List of 2 dim Arraylist containing Hexadecimal values.
-     *
-     * @return list of 2-dim ArrayList containing encrypted message.
-     */
-    public List[] encryption(List[] plainText) {
+    public byte[] encryption(byte[] message) {
 
-        if(plainText == null) {
+        if (message == null) {
             return null;
         }
 
         //initial list to encrypted message
-        List[] encrypted = new List[plainText.length];
+        byte[] encrypted = new byte[message.length];
 
         //declare runner
         ArrayList<ArrayList<String>> currentMatToEnc;
 
-        for(int i = 0; i < plainText.length; i++) {
+        for (int i = 0; i < message.length / 16; i++) {
+            byte[][] blocked = new byte[4][4];
 
-            //get current message
-            currentMatToEnc =(ArrayList<ArrayList<String>>) plainText[i];
+            for (int r = 0; r < 4; r++) {
+                blocked[r] = Arrays.copyOfRange(message, (r * 4) + (i * 16), ((r + 1) * 4) + (i * 16));
 
-            //iteration 1
-            currentMatToEnc = utils.shiftCols(currentMatToEnc);
-            currentMatToEnc = utils.matrixXor(currentMatToEnc, this.key1);
-
-            //iteration 2
-            currentMatToEnc = utils.shiftCols(currentMatToEnc);
-            currentMatToEnc = utils.matrixXor(currentMatToEnc, this.key2);
-
-            //iteration 3
-            currentMatToEnc = utils.shiftCols(currentMatToEnc);
-            currentMatToEnc = utils.matrixXor(currentMatToEnc, this.key3);
-
-            //insert to encrypted list
-            encrypted[i] = currentMatToEnc;
+            }
+            byte[][] transposed = new byte[4][4];
+            for (int k = 0; k < 4; k++) {
+                for (int j = 0; j < 4; j++) {
+                    transposed[k][j] = blocked[j][k];
+                }
+            }
+            for (int k = 0; k < 4; k++) {
+                for (int j = 0; j < 4; j++) {
+                    transposed[k][j] = (byte) ((this.key1[k][j]) ^ (transposed[k][j]));
+                }
+            }
+            byte[][] transposed2 = new byte[4][4];
+            for (int k = 0; k < 4; k++) {
+                for (int j = 0; j < 4; j++) {
+                    transposed2[k][j] = transposed[j][k];
+                }
+            }
+            for (int k = 0; k < 4; k++) {
+                for (int j = 0; j < 4; j++) {
+                    encrypted[k * 4 + j + i * 16] = (byte) ((this.key2[k][j]) ^ (transposed2[k][j]));
+                }
+            }
         }
-
         return encrypted;
-    }
-
-    /***
-     * write 2-dim list to the given output file.
-     *
-     * @param path path to the output file.
-     * @param listMatrixToWrite list containing 2-dim values
-     */
-    public void writeMatrixToFile(String path, List[] listMatrixToWrite)
-    {
-        utils.writeMatrixToFile(path, listMatrixToWrite);
     }
 }
