@@ -6,10 +6,13 @@ tcp and ip.src == 216.58.210.234 and frame.time_relative >= 31 and frame.time_re
 ip.dst==216.58.210.234 && tls.record.version==0x0303
 
 1.3
+ip.src == 216.58.210.234
 2914
 
 1.4
+ip.src == 216.58.210.234
 54
 
 1.5
 בן גוריון
+ynet
