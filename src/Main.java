@@ -1,51 +1,53 @@
-
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        //Get argument from command
         String keyOrMsg = args[2];
         String msgOrCipher = args[4];
         String outputPath = args[6];
+        byte[] keysOrMsg = new byte[0];
+        byte[] msgOrCiphr = new byte[0];
 
-        byte[] keys = Files.readAllBytes(Paths.get(keyOrMsg));
+        try {
+            keysOrMsg = Files.readAllBytes(Paths.get(keyOrMsg));
+            msgOrCiphr = Files.readAllBytes(Paths.get(msgOrCipher));
+        } catch (Exception e) {
+            System.out.println("exception read from files");
+            return;
+        }
+        byte[] k1 = Arrays.copyOfRange(keysOrMsg, 0, keysOrMsg.length / 2);
+        byte[] k2 = Arrays.copyOfRange(keysOrMsg, keysOrMsg.length / 2, keysOrMsg.length);
+        AES aes = new AES();
 
-        byte[] k1 = Arrays.copyOfRange(keys, 0, keys.length / 2);
-        byte[] k2 = Arrays.copyOfRange(keys, keys.length / 2, keys.length);
-
-        byte[] m = Files.readAllBytes(Paths.get(msgOrCipher));
-
-
-        if (args[0].equals("-e")) {
-            AesEnc enc = new AesEnc(k1,k2);
-            byte[] res = enc.encryption(m);
-            try (FileOutputStream fos = new FileOutputStream(outputPath)) {
-                fos.write(res);
-            } catch (Exception e) {
-                System.out.println("exception write to file");
+        switch (args[0]) {
+            case "-e": {
+                byte[] res = aes.encryption(msgOrCiphr, k1, k2);
+                writeToFile(res, outputPath);
+                break;
             }
-        } else if (args[0].equals("-d")) {
-            AesDec dec = new AesDec(k1,k2);
-            byte[] res = dec.decryption(m);
-            try (FileOutputStream fos = new FileOutputStream(outputPath)) {
-                fos.write(res);
-            } catch (Exception e) {
-                System.out.println("exception write to file");
+            case "-d": {
+                byte[] res = aes.decryption(msgOrCiphr, k1, k2);
+                writeToFile(res, outputPath);
+                break;
             }
-        } else if (args[0].equals("-b")) {
-            AesBreak aesBreak = new AesBreak();
-            byte[] res = aesBreak.breakAes(keys,m);
-            try (FileOutputStream fos = new FileOutputStream(outputPath)) {
-                fos.write(res);
-            } catch (Exception e) {
-                System.out.println("exception write to file");
+            case "-b": {
+                byte[] res = aes.breakAes(keysOrMsg, msgOrCiphr);
+                writeToFile(res, outputPath);
+                break;
             }
+        }
+    }
+
+    private static void writeToFile(byte[] bytes, String path) {
+        try (FileOutputStream fos = new FileOutputStream(path)) {
+            fos.write(bytes);
+        } catch (Exception e) {
+            System.out.println("exception write to file");
+
         }
     }
 }

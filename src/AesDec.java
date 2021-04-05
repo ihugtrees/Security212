@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.ArrayList;
 
 public class AesDec {
     private byte[][] key1 = new byte[4][4];
@@ -14,15 +13,9 @@ public class AesDec {
 
     public byte[] decryption(byte[] encrypted) {
 
-        if (encrypted == null) {
+        if (encrypted == null)
             return null;
-        }
-
-        //initial list to encrypted message
         byte[] message = new byte[encrypted.length];
-
-        //declare runner
-        ArrayList<ArrayList<String>> currentMatToEnc;
 
         for (int i = 0; i < encrypted.length / 16; i++) {
             byte[][] blocked = new byte[4][4];

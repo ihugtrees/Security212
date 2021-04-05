@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.ArrayList;
 
 public class AesEnc {
     private byte[][] key1 = new byte[4][4];
@@ -13,24 +12,17 @@ public class AesEnc {
     }
 
     public byte[] encryption(byte[] message) {
-
-        if (message == null) {
+        if (message == null)
             return null;
-        }
 
-        //initial list to encrypted message
         byte[] encrypted = new byte[message.length];
-
-        //declare runner
-        ArrayList<ArrayList<String>> currentMatToEnc;
 
         for (int i = 0; i < message.length / 16; i++) {
             byte[][] blocked = new byte[4][4];
 
-            for (int r = 0; r < 4; r++) {
+            for (int r = 0; r < 4; r++)
                 blocked[r] = Arrays.copyOfRange(message, (r * 4) + (i * 16), ((r + 1) * 4) + (i * 16));
 
-            }
             byte[][] transposed = new byte[4][4];
             for (int k = 0; k < 4; k++) {
                 for (int j = 0; j < 4; j++) {
