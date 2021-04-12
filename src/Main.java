@@ -9,8 +9,8 @@ public class Main {
         String keyOrMsg = args[2];
         String msgOrCipher = args[4];
         String outputPath = args[6];
-        byte[] keysOrMsg = new byte[0];
-        byte[] msgOrCiphr = new byte[0];
+        byte[] keysOrMsg;
+        byte[] msgOrCiphr;
 
         try {
             keysOrMsg = Files.readAllBytes(Paths.get(keyOrMsg));
@@ -47,7 +47,6 @@ public class Main {
             fos.write(bytes);
         } catch (Exception e) {
             System.out.println("exception write to file");
-
         }
     }
 }

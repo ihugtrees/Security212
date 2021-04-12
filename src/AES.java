@@ -9,7 +9,7 @@ public class AES {
         return matrix;
     }
 
-    private void matXor(byte[][] block, byte[][] key){
+    private void matXor(byte[][] block, byte[][] key) {
         for (int k = 0; k < 4; k++) {
             for (int j = 0; j < 4; j++) {
                 block[k][j] = (byte) (key[k][j] ^ block[k][j]);
@@ -17,7 +17,7 @@ public class AES {
         }
     }
 
-    private byte [][] matTranspose(byte[][] block){
+    private byte[][] matTranspose(byte[][] block) {
         byte[][] transposed = new byte[4][4];
         for (int k = 0; k < 4; k++) {
             for (int j = 0; j < 4; j++) {
@@ -29,8 +29,8 @@ public class AES {
 
     public byte[] encryption(byte[] msg, byte[] key11, byte[] key22) {
 
-        byte[][] key1 = makeMatrix(key11,0);
-        byte[][] key2 = makeMatrix(key22,0);
+        byte[][] key1 = makeMatrix(key11, 0);
+        byte[][] key2 = makeMatrix(key22, 0);
         byte[] encrypted = new byte[msg.length];
 
 //        for (int r = 0; r < 4; r++) {
@@ -79,8 +79,8 @@ public class AES {
 
     public byte[] decryption(byte[] cipher, byte[] key11, byte[] key22) {
 
-        byte[][] key1 = makeMatrix(key11,0);
-        byte[][] key2 = makeMatrix(key22,0);
+        byte[][] key1 = makeMatrix(key11, 0);
+        byte[][] key2 = makeMatrix(key22, 0);
         byte[] message = new byte[cipher.length];
 
 //        for (int r = 0; r < 4; r++) {
@@ -157,8 +157,8 @@ public class AES {
 //            }
 //        }
 
-        for (int i=0; i<16; i++){
-            key[i+16] = (byte) (cipher[i] ^ msg[i] ^ key1[i]);
+        for (int i = 0; i < 16; i++) {
+            key[i + 16] = (byte) (cipher[i] ^ msg[i] ^ key1[i]);
         }
         return key;
     }
