@@ -1,0 +1,153 @@
+----------------------------------------------------------------------------
+----------------------------------/etc/passwd-------------------------------
+----------------------------------------------------------------------------
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+libuuid:x:100:101::/var/lib/libuuid:
+syslog:x:101:104::/home/syslog:/bin/false
+messagebus:x:102:106::/var/run/dbus:/bin/false
+landscape:x:103:109::/var/lib/landscape:/bin/false
+osboxes:x:1000:1000:osboxes.org,,,:/home/osboxes:/bin/bash
+sshd:x:104:65534::/var/run/sshd:/usr/sbin/nologin
+larry:x:1001:1003:larry,,,:/home/larry:/bin/bash
+moe:x:1002:1004:,,,:/home/moe:/bin/bash
+curly:x:1003:1005:,,,:/home/curly:/bin/bash
+ken:x:1004:1002:,,,:/admin/ken:/bin/bash
+dmr:x:1005:1002:,,,:/admin/dmr:/bin/bash
+bwk:x:1006:1002:,,,:/admin/bwk:/bin/bash
+tps:x:1008:1007:,,,:/home/tps:/bin/bash
+----------------------------------------------------------------------------
+----------------------------------/etc/group--------------------------------
+----------------------------------------------------------------------------
+root:x:0:
+daemon:x:1:
+bin:x:2:
+sys:x:3:
+adm:x:4:syslog,osboxes
+tty:x:5:
+disk:x:6:
+lp:x:7:
+mail:x:8:
+news:x:9:
+uucp:x:10:
+man:x:12:
+proxy:x:13:
+kmem:x:15:
+dialout:x:20:
+fax:x:21:
+voice:x:22:
+cdrom:x:24:osboxes
+floppy:x:25:
+tape:x:26:
+sudo:x:27:osboxes
+audio:x:29:
+dip:x:30:osboxes
+www-data:x:33:
+backup:x:34:
+operator:x:37:
+list:x:38:
+irc:x:39:
+src:x:40:
+gnats:x:41:
+shadow:x:42:
+utmp:x:43:
+video:x:44:
+sasl:x:45:
+plugdev:x:46:osboxes
+staff:x:50:
+games:x:60:
+users:x:100:
+nogroup:x:65534:
+libuuid:x:101:
+netdev:x:102:
+crontab:x:103:
+syslog:x:104:
+fuse:x:105:
+messagebus:x:106:
+mlocate:x:107:
+ssh:x:108:
+landscape:x:109:
+osboxes:x:1000:
+lpadmin:x:110:osboxes
+sambashare:x:111:osboxes
+emp:x:1001:larry,moe,curly
+wheel:x:1002:bwk,ken,dmr
+larry:x:1003:
+moe:x:1004:
+curly:x:1005:
+tps:x:1007:
+----------------------------------------------------------------------------
+----------------------------------/admins-----------------------------------
+----------------------------------------------------------------------------
+drwxrwSr-x 5 root root 4096 Apr 27 05:27 /admins
+total 12
+drwxrwSr-x 2 bwk wheel 4096 Apr 27 05:27 bwk
+drwxrwSr-x 2 dmr wheel 4096 Apr 27 05:27 dmr
+drwxrwSr-x 2 ken wheel 4096 Apr 27 05:26 ken
+----------------------------------------------------------------------------
+---------------------------------/ballots-----------------------------------
+----------------------------------------------------------------------------
+drwx----w- 2 root wheel 4096 Apr 27 07:05 /ballots
+----------------------------------------------------------------------------
+---------------------------------/home--------------------------------------
+----------------------------------------------------------------------------
+drwxr-x--- 8 root wheel 4096 Apr 27 08:21 /home
+total 36
+drwxr-x--- 2 curly   curly    4096 Apr 27 05:07 curly
+drwxr-x--- 2 larry   larry    4096 Apr 27 05:06 larry
+drwxr-x--- 2 moe     moe      4096 Apr 27 05:07 moe
+----------------------------------------------------------------------------
+---------------------------------/tpsreports--------------------------------
+----------------------------------------------------------------------------
+drwxrwx--T 2 tps wheel 4096 Apr 27 07:25 /tpsreports
+----------------------------------------------------------------------------
+---------------------------------/etc/sudoers-------------------------------
+----------------------------------------------------------------------------
+#
+# This file MUST be edited with the 'visudo' command as root.
+#
+# Please consider adding local content in /etc/sudoers.d/ instead of
+# directly modifying this file.
+#
+# See the man page for details on how to write a sudoers file.
+#
+Defaults	env_reset
+Defaults	mail_badpass
+Defaults	secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# Host alias specification
+
+# User alias specification
+
+# Cmnd alias specification
+
+# User privilege specification
+root	ALL=(ALL:ALL) ALL
+
+# Members of the admin group may gain root privileges
+%admin ALL=(ALL) ALL
+
+# Allow members of group sudo to execute any command
+%sudo	ALL=(ALL:ALL) ALL
+
+# See sudoers(5) for more information on "#include" directives:
+
+#includedir /etc/sudoers.d
+%wheel ALL=(ALL) NOPASSWD:ALL
+----------------------------------------------------------------------------
